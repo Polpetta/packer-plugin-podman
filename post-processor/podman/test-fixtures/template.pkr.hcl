@@ -7,7 +7,7 @@ build {
     "source.null.basic-example"
   ]
 
-  post-processor "scaffolding-my-post-processor" {
+  post-processor "podman-my-post-processor" {
     mock = "my-mock-config"
   }
 }

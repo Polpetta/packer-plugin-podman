@@ -1,6 +1,6 @@
 //go:generate packer-sdc mapstructure-to-hcl2 -type Config
 
-package scaffolding
+package podman
 
 import (
 	"context"
@@ -27,7 +27,7 @@ func (p *PostProcessor) ConfigSpec() hcldec.ObjectSpec { return p.config.FlatMap
 
 func (p *PostProcessor) Configure(raws ...interface{}) error {
 	err := config.Decode(&p.config, &config.DecodeOpts{
-		PluginType:         "packer.post-processor.scaffolding",
+		PluginType:         "packer.post-processor.podman",
 		Interpolate:        true,
 		InterpolateContext: &p.config.ctx,
 		InterpolateFilter: &interpolate.RenderFilter{

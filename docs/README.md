@@ -1,4 +1,4 @@
-# Scaffolding Plugins
+# podman Plugins
 
 <!--
   Include a short overview about the plugin.
@@ -54,25 +54,25 @@ on [installing a plugin](https://www.packer.io/docs/extending/plugins/#installin
 
 ## Plugin Contents
 
-The Scaffolding plugin is intended as a starting point for creating Packer plugins, containing:
+The podman plugin is intended as a starting point for creating Packer plugins, containing:
 
 ### Builders
 
-- [builder](/docs/builders/builder-name.mdx) - The scaffolding builder is used to create endless Packer
+- [builder](/docs/builders/builder-name.mdx) - The podman builder is used to create endless Packer
   plugins using a consistent plugin structure.
 
 ### Provisioners
 
-- [provisioner](/docs/provisioners/provisioner-name.mdx) - The scaffolding provisioner is used to provisioner
+- [provisioner](/docs/provisioners/provisioner-name.mdx) - The podman provisioner is used to provisioner
   Packer builds.
 
 ### Post-processors
 
-- [post-processor](/docs/post-processors/postprocessor-name.mdx) - The scaffolding post-processor is used to
-  export scaffolding builds.
+- [post-processor](/docs/post-processors/postprocessor-name.mdx) - The podman post-processor is used to
+  export podman builds.
 
 ### Data Sources
 
-- [data source](/docs/datasources/datasource-name.mdx) - The scaffolding data source is used to
-  export scaffolding data.
+- [data source](/docs/datasources/datasource-name.mdx) - The podman data source is used to
+  export podman data.
 

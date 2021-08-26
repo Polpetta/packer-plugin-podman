@@ -1,3 +1,3 @@
-data "scaffolding-my-datasource" "mock-data" {
+data "podman-my-datasource" "mock-data" {
   mock = "mock-config"
 }

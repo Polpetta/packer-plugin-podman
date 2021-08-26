@@ -1,4 +1,4 @@
-package scaffolding
+package podman
 
 import (
 	_ "embed"
@@ -13,20 +13,20 @@ import (
 )
 
 //go:embed test-fixtures/template.pkr.hcl
-var testDatasourceHCL2Basic string
+var testBuilderHCL2Basic string
 
-// Run with: PACKER_ACC=1 go test -count 1 -v ./datasource/scaffolding/data_acc_test.go  -timeout=120m
-func TestAccScaffoldingDatasource(t *testing.T) {
+// Run with: PACKER_ACC=1 go test -count 1 -v ./builder/podman/builder_acc_test.go  -timeout=120m
+func TestAccpodmanBuilder(t *testing.T) {
 	testCase := &acctest.PluginTestCase{
-		Name: "scaffolding_datasource_basic_test",
+		Name: "podman_builder_basic_test",
 		Setup: func() error {
 			return nil
 		},
 		Teardown: func() error {
 			return nil
 		},
-		Template: testDatasourceHCL2Basic,
-		Type:     "scaffolding-my-datasource",
+		Template: testBuilderHCL2Basic,
+		Type:     "podman-my-builder",
 		Check: func(buildCommand *exec.Cmd, logfile string) error {
 			if buildCommand.ProcessState != nil {
 				if buildCommand.ProcessState.ExitCode() != 0 {
@@ -46,14 +46,9 @@ func TestAccScaffoldingDatasource(t *testing.T) {
 			}
 			logsString := string(logsBytes)
 
-			fooLog := "null.basic-example: foo: foo-value"
-			barLog := "null.basic-example: bar: bar-value"
-
-			if matched, _ := regexp.MatchString(fooLog+".*", logsString); !matched {
+			buildGeneratedDataLog := "podman-my-builder.basic-example: build generated data: mock-build-data"
+			if matched, _ := regexp.MatchString(buildGeneratedDataLog+".*", logsString); !matched {
 				t.Fatalf("logs doesn't contain expected foo value %q", logsString)
-			}
-			if matched, _ := regexp.MatchString(barLog+".*", logsString); !matched {
-				t.Fatalf("logs doesn't contain expected bar value %q", logsString)
 			}
 			return nil
 		},

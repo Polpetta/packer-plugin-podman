@@ -1,4 +1,4 @@
-module packer-plugin-scaffolding
+module packer-plugin-podman
 
 go 1.16
 

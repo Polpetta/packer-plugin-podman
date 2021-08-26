@@ -1,13 +1,13 @@
 ---
 description: >
-  The scaffolding provisioner is used to provisioner Packer builds.
-page_title: Scaffolding - Provisioners
-nav_title: Scaffolding
+  The podman provisioner is used to provisioner Packer builds.
+page_title: podman - Provisioners
+nav_title: podman
 ---
 
-# Scaffolding
+# podman
 
-Type: `scaffolding`
+Type: `podman`
 
 <!--
   Include a short description about the provisioner. This is a good place
@@ -15,7 +15,7 @@ Type: `scaffolding`
   be helpful to a user. See https://www.packer.io/docs/provisioners/null
 -->
 
-The scaffolding provisioner is used to provisioner Packer builds.
+The podman provisioner is used to provisioner Packer builds.
 
 
 <!-- Provisioner Configuration Fields -->
@@ -54,7 +54,7 @@ The scaffolding provisioner is used to provisioner Packer builds.
      name = "jay"
    }
 
-   provisioner "scaffolding" {
+   provisioner "podman" {
      mock = "mocking ${source.name}"
    }
  }

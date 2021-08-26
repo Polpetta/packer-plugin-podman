@@ -1,14 +1,14 @@
 ---
 description: >
-  The scaffolding builder is used to create endless Packer plugins using
+  The podman builder is used to create endless Packer plugins using
   a consistent plugin structure.
-page_title: Scaffolding - Builders
-nav_title: Scaffolding
+page_title: podman - Builders
+nav_title: podman
 ---
 
-# Scaffolding
+# podman
 
-Type: `scaffolding`
+Type: `podman`
 
 <!--
   Include a short description about the builder. This is a good place
@@ -16,7 +16,7 @@ Type: `scaffolding`
   builder environment. See https://www.packer.io/docs/builders/null
 -->
 
-The scaffolding builder is used to create endless Packer plugins using
+The podman builder is used to create endless Packer plugins using
 a consistent plugin structure.
 
 
@@ -24,7 +24,7 @@ a consistent plugin structure.
 
 ### Required
 
-- `mock` (string) - The name of the mock to use for the Scaffolding API.
+- `mock` (string) - The name of the mock to use for the podman API.
 
 
 <!--
@@ -37,7 +37,7 @@ a consistent plugin structure.
 
 ### Optional
 
-- `mock_api_url` (string) - The Scaffolding API endpoint to connect to.
+- `mock_api_url` (string) - The podman API endpoint to connect to.
   Defaults to https://example.com
 
 
@@ -51,12 +51,12 @@ a consistent plugin structure.
 
 
 ```hcl
- source "scaffolding" "example" {
+ source "podman" "example" {
    mock = "bird"
  }
 
  build {
-   sources = ["source.scaffolding.example"]
+   sources = ["source.podman.example"]
  }
 ```
 

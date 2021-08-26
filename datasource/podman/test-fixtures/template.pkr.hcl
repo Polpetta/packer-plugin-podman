@@ -1,10 +1,10 @@
-data "scaffolding-my-datasource" "test" {
+data "podman-my-datasource" "test" {
   mock = "mock-config"
 }
 
 locals {
-  foo = data.scaffolding-my-datasource.test.foo
-  bar = data.scaffolding-my-datasource.test.bar
+  foo = data.podman-my-datasource.test.foo
+  bar = data.podman-my-datasource.test.bar
 }
 
 source "null" "basic-example" {

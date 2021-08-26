@@ -1,14 +1,14 @@
 ---
 description: >
-  The scaffolding data source is used to create endless Packer plugins using
+  The podman data source is used to create endless Packer plugins using
   a consistent plugin structure.
-page_title: Scaffolding - Data Sources
-nav_title: Scaffolding
+page_title: podman - Data Sources
+nav_title: podman
 ---
 
-# Scaffolding
+# podman
 
-Type: `scaffolding`
+Type: `podman`
 
 <!--
   Include a short description about the data source. This is a good place
@@ -16,7 +16,7 @@ Type: `scaffolding`
   data source environment. See https://www.packer.io/docs/datasources/amazon-ami
 -->
 
-The scaffolding data source is used to create endless Packer plugins using
+The podman data source is used to create endless Packer plugins using
 a consistent plugin structure.
 
 
@@ -24,7 +24,7 @@ a consistent plugin structure.
 
 ### Required
 
-- `mock` (string) - The name of the mock to use for the Scaffolding API.
+- `mock` (string) - The name of the mock to use for the podman API.
 
 
 <!--
@@ -37,7 +37,7 @@ a consistent plugin structure.
 
 ### Optional
 
-- `mock_api_url` (string) - The Scaffolding API endpoint to connect to.
+- `mock_api_url` (string) - The podman API endpoint to connect to.
   Defaults to https://example.com
 
 
@@ -50,8 +50,8 @@ a consistent plugin structure.
 
 ### OutPut
 
-- `foo` (string) - The Scaffolding output foo value.
-- `bar` (string) - The Scaffolding output bar value.
+- `foo` (string) - The podman output foo value.
+- `bar` (string) - The podman output bar value.
 
 <!--
   A basic example on the usage of the data source. Multiple examples
@@ -63,15 +63,15 @@ a consistent plugin structure.
 
 
 ```hcl
-data "scaffolding" "example" {
+data "podman" "example" {
    mock = "bird"
  }
- source "scaffolding" "example" {
-   mock = data.scaffolding.example.foo
+ source "podman" "example" {
+   mock = data.podman.example.foo
  }
 
  build {
-   sources = ["source.scaffolding.example"]
+   sources = ["source.podman.example"]
  }
 ```
 

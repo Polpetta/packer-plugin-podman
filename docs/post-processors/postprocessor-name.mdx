@@ -1,13 +1,13 @@
 ---
 description: >
-  The scaffolding post-processor is used to export Packer Scaffolding builds.
-page_title: Scaffolding - Post-Processors
-nav_title: Scaffolding
+  The podman post-processor is used to export Packer podman builds.
+page_title: podman - Post-Processors
+nav_title: podman
 ---
 
-# Scaffolding
+# podman
 
-Type: `scaffolding`
+Type: `podman`
 
 <!--
   Include a short description about the post-processor. This is a good place
@@ -15,7 +15,7 @@ Type: `scaffolding`
   be helpful to a user. See https://www.packer.io/docs/provisioners/null
 -->
 
-The scaffolding post-processor is used to export Packer Scaffolding builds.
+The podman post-processor is used to export Packer podman builds.
 
 
 <!-- Post-Processor Configuration Fields -->
@@ -44,15 +44,15 @@ The scaffolding post-processor is used to export Packer Scaffolding builds.
 
 
 ```hcl
- source "scaffolding" "example" {
+ source "podman" "example" {
    mock = "jay"
  }
 
  build {
-   sources = ["source.scaffolding.example"]
+   sources = ["source.podman.example"]
 
-   post-processor "scaffolding" {
-     mock = "builds/scaffolding.box"
+   post-processor "podman" {
+     mock = "builds/podman.box"
    }
  }
 ```

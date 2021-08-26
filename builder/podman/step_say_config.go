@@ -1,4 +1,4 @@
-package scaffolding
+package podman
 
 import (
 	"context"

@@ -7,7 +7,7 @@ build {
     "source.null.basic-example"
   ]
 
-  provisioner "scaffolding-my-provisioner" {
+  provisioner "podman-my-provisioner" {
     mock = "my-mock-config"
   }
 }

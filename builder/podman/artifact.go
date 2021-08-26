@@ -1,4 +1,4 @@
-package scaffolding
+package podman
 
 // packersdk.Artifact implementation
 type Artifact struct {
