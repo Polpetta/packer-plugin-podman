@@ -143,7 +143,7 @@ func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
 
 	// Default to the normal Podman type
 	if c.Comm.Type == "" {
-		c.Comm.Type = "podman"
+		c.Comm.Type = "docker"
 	}
 
 	var errs *packersdk.MultiError
