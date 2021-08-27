@@ -143,6 +143,9 @@ func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
 
 	// Default to the normal Podman type
 	if c.Comm.Type == "" {
+		// Note: if we don't put "docker" here, packer SDK will get very angry
+		// at us since the communicator has a switch with "ssh", "WinRM" and
+		// "docker or none" so we have to stick with this string
 		c.Comm.Type = "docker"
 	}
 
@@ -169,7 +172,7 @@ func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
 	}
 
 	if c.ContainerDir == "" {
-			c.ContainerDir = "/packer-files"
+		c.ContainerDir = "/packer-files"
 	}
 
 	if errs != nil && len(errs.Errors) > 0 {
