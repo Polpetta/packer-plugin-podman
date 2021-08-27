@@ -48,6 +48,9 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 	state.Put("ui", ui)
 	generatedData := &packerbuilderdata.GeneratedData{State: state}
 
+	// Setup the driver that will talk to Podman
+	state.Put("driver", driver)
+
 	steps := []multistep.Step{
 		&StepTempDir{},
 		&StepPull{},
