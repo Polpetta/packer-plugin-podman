@@ -75,6 +75,7 @@ type ContainerConfig struct {
 	Volumes    map[string]string
 	TmpFs      []string
 	Privileged bool
+	Systemd string
 }
 
 // This is the template that is used for the RunCommand in the ContainerConfig.

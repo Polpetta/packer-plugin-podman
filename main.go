@@ -11,7 +11,7 @@ import (
 
 func main() {
 	pps := plugin.NewSet()
-	pps.RegisterBuilder("podman", new(podman.Builder))
+	pps.RegisterBuilder(plugin.DEFAULT_NAME, new(podman.Builder))
 	pps.SetVersion(podmanVersion.PluginVersion)
 	err := pps.Run()
 	if err != nil {

@@ -106,6 +106,8 @@ type Config struct {
 
 func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
 	c.FixUploadOwner = true
+	// Systemd accepts three value, so we have to treat it as a string
+	c.Systemd = "true"
 
 	var md mapstructure.Metadata
 	err := config.Decode(c, &config.DecodeOpts{

@@ -298,6 +298,7 @@ func (d *PodmanDriver) StartContainer(config *ContainerConfig) (string, error) {
 	if config.Privileged {
 		args = append(args, "--privileged")
 	}
+	args = append(args, fmt.Sprintf("--systemd=%s", config.Systemd))
 	for _, v := range config.TmpFs {
 		args = append(args, "--tmpfs", v)
 	}
