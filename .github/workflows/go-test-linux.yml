@@ -18,7 +18,7 @@ jobs:
     outputs:
       go-version: ${{ steps.get-go-version.outputs.go-version }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: 'Determine Go version'
         id: get-go-version
         run: |
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Linux Go tests
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ needs.get-go-version.outputs.go-version }}
