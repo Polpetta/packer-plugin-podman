@@ -81,11 +81,6 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 		return nil, errArtifactNotUsed
 	}
 
-	steps = append(steps,
-		nil,
-		new(commonsteps.StepProvision),
-	)
-
 	// Run!
 	b.runner = commonsteps.NewRunner(steps, b.config.PackerConfig, ui)
 	b.runner.Run(ctx, state)
