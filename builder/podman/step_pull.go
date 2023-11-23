@@ -30,6 +30,21 @@ func (s *StepPull) Run(ctx context.Context, state multistep.StateBag) multistep.
 
 	driver := state.Get("driver").(Driver)
 
+	if config.Login {
+		ui.Message("Logging in...")
+		err := driver.Login(
+			config.LoginServer,
+			config.LoginUsername,
+			config.LoginPassword)
+		if err != nil {
+			err := fmt.Errorf("Error logging in: %s", err)
+			state.Put("error", err)
+			ui.Error(err.Error())
+			return multistep.ActionHalt
+		}
+	}
+
+
 	if err := driver.Pull(config.Image); err != nil {
 		err := fmt.Errorf("Error pulling Podman image: %s", err)
 		state.Put("error", err)
