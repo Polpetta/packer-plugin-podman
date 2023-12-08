@@ -44,7 +44,6 @@ func (s *StepPull) Run(ctx context.Context, state multistep.StateBag) multistep.
 		}
 	}
 
-
 	if err := driver.Pull(config.Image); err != nil {
 		err := fmt.Errorf("Error pulling Podman image: %s", err)
 		state.Put("error", err)

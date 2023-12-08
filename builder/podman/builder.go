@@ -52,8 +52,8 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 		&StepPull{},
 		&StepRun{},
 		&communicator.StepConnect{
-			Config: &b.config.Comm,
-			Host: commHost(b.config.Comm.Host()),
+			Config:    &b.config.Comm,
+			Host:      commHost(b.config.Comm.Host()),
 			SSHConfig: b.config.Comm.SSHConfigFunc(),
 			CustomConnect: map[string]multistep.Step{
 				"docker": &StepConnectPodman{},
