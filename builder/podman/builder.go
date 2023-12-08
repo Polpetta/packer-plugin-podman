@@ -42,7 +42,7 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 	// Fetch default CMD and ENTRYPOINT
 	defaultCmd, _ := driver.Cmd(b.config.Image)
 	defaultEntrypoint, _ := driver.Entrypoint(b.config.Image)
-	
+
 	// Set defaults if not provided by the user
 	hasCmd, hasEntrypoint := false, false
 	for _, change := range b.config.Changes {
@@ -52,7 +52,7 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 			hasEntrypoint = true
 		}
 	}
-	
+
 	if !hasCmd && defaultCmd != "" {
 		b.config.Changes = append(b.config.Changes, "CMD "+defaultCmd)
 	}
@@ -74,8 +74,8 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 		&StepPull{},
 		&StepRun{},
 		&communicator.StepConnect{
-			Config: &b.config.Comm,
-			Host: commHost(b.config.Comm.Host()),
+			Config:    &b.config.Comm,
+			Host:      commHost(b.config.Comm.Host()),
 			SSHConfig: b.config.Comm.SSHConfigFunc(),
 			CustomConnect: map[string]multistep.Step{
 				"docker": &StepConnectPodman{},
