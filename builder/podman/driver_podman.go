@@ -183,7 +183,7 @@ func (d *PodmanDriver) Cmd(id string) (string, error) {
 		"podman",
 		"inspect",
 		"--format",
-		"{{json .Config.Cmd }}",
+		"{{if .Config.Cmd}} {{json .Config.Cmd}} {{else}} [] {{end}}",
 		id)
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
@@ -200,7 +200,7 @@ func (d *PodmanDriver) Entrypoint(id string) (string, error) {
 		"podman",
 		"inspect",
 		"--format",
-		"{{json .Config.Entrypoint }}",
+		"{{if .Config.Entrypoint}} {{json .Config.Entrypoint}} {{else}} [] {{end}}",
 		id)
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
