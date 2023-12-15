@@ -5,7 +5,6 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	"github.com/hashicorp/packer-plugin-sdk/packerbuilderdata"
 	"log"
-	"strings"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
@@ -39,27 +38,6 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 		return nil, err
 	}
 
-	// Fetch default CMD and ENTRYPOINT
-	defaultCmd, _ := driver.Cmd(b.config.Image)
-	defaultEntrypoint, _ := driver.Entrypoint(b.config.Image)
-
-	// Set defaults if not provided by the user
-	hasCmd, hasEntrypoint := false, false
-	for _, change := range b.config.Changes {
-		if strings.HasPrefix(change, "CMD") {
-			hasCmd = true
-		} else if strings.HasPrefix(change, "ENTRYPOINT") {
-			hasEntrypoint = true
-		}
-	}
-
-	if !hasCmd && defaultCmd != "" {
-		b.config.Changes = append(b.config.Changes, "CMD "+defaultCmd)
-	}
-	if !hasEntrypoint && defaultEntrypoint != "" {
-		b.config.Changes = append(b.config.Changes, "ENTRYPOINT "+defaultEntrypoint)
-	}
-
 	state := new(multistep.BasicStateBag)
 	state.Put("config", &b.config)
 	state.Put("hook", hook)
@@ -91,6 +69,7 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 		log.Print("[DEBUG] Container will be discarded")
 	} else if b.config.Commit {
 		log.Print("[DEBUG] Container will be committed")
+		steps = append(steps, &StepSetDefaults{})
 		steps = append(steps,
 			new(StepCommit),
 			&StepSetGeneratedData{ // Adds ImageSha256 variable available after StepCommit
