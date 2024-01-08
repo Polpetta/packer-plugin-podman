@@ -177,6 +177,40 @@ func (d *PodmanDriver) Sha256(id string) (string, error) {
 	return strings.TrimSpace(stdout.String()), nil
 }
 
+func (d *PodmanDriver) Cmd(id string) (string, error) {
+	var stderr, stdout bytes.Buffer
+	cmd := exec.Command(
+		"podman",
+		"inspect",
+		"--format",
+		"{{if .Config.Cmd}} {{json .Config.Cmd}} {{else}} [] {{end}}",
+		id)
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	if err := cmd.Run(); err != nil {
+		return "", fmt.Errorf("Error: %s\n\nStderr: %s", err, stderr.String())
+	}
+
+	return strings.TrimSpace(stdout.String()), nil
+}
+
+func (d *PodmanDriver) Entrypoint(id string) (string, error) {
+	var stderr, stdout bytes.Buffer
+	cmd := exec.Command(
+		"podman",
+		"inspect",
+		"--format",
+		"{{if .Config.Entrypoint}} {{json .Config.Entrypoint}} {{else}} [] {{end}}",
+		id)
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	if err := cmd.Run(); err != nil {
+		return "", fmt.Errorf("Error: %s\n\nStderr: %s", err, stderr.String())
+	}
+
+	return strings.TrimSpace(stdout.String()), nil
+}
+
 func (d *PodmanDriver) Login(repo, user, pass string) error {
 	d.l.Lock()
 

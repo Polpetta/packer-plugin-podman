@@ -52,8 +52,8 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 		&StepPull{},
 		&StepRun{},
 		&communicator.StepConnect{
-			Config: &b.config.Comm,
-			Host: commHost(b.config.Comm.Host()),
+			Config:    &b.config.Comm,
+			Host:      commHost(b.config.Comm.Host()),
 			SSHConfig: b.config.Comm.SSHConfigFunc(),
 			CustomConnect: map[string]multistep.Step{
 				"docker": &StepConnectPodman{},
@@ -69,6 +69,7 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 		log.Print("[DEBUG] Container will be discarded")
 	} else if b.config.Commit {
 		log.Print("[DEBUG] Container will be committed")
+		steps = append(steps, &StepSetDefaults{})
 		steps = append(steps,
 			new(StepCommit),
 			&StepSetGeneratedData{ // Adds ImageSha256 variable available after StepCommit
