@@ -101,6 +101,15 @@ type Config struct {
 	// Please refer to Podman documentation for additional details
 	Systemd string `mapstructure:"systemd" required:"false"`
 
+	// This is used to login to private registry to pull a base container.
+	Login bool `mapstructure:"login" required:"false"`
+	// The password to use to authenticate to login.
+	LoginPassword string `mapstructure:"login_password" required:"false"`
+	// The server address to login to.
+	LoginServer string `mapstructure:"login_server" required:"false"`
+	// The username to use to authenticate to login.
+	LoginUsername string `mapstructure:"login_username" required:"false"`
+
 	ctx interpolate.Context
 }
 

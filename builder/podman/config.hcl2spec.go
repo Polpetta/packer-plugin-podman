@@ -87,6 +87,10 @@ type FlatConfig struct {
 	Volumes                   map[string]string `mapstructure:"volumes" required:"false" cty:"volumes" hcl:"volumes"`
 	FixUploadOwner            *bool             `mapstructure:"fix_upload_owner" required:"false" cty:"fix_upload_owner" hcl:"fix_upload_owner"`
 	Systemd                   *string           `mapstructure:"systemd" required:"false" cty:"systemd" hcl:"systemd"`
+	Login                     *bool             `mapstructure:"login" required:"false" cty:"login" hcl:"login"`
+	LoginPassword             *string           `mapstructure:"login_password" required:"false" cty:"login_password" hcl:"login_password"`
+	LoginServer               *string           `mapstructure:"login_server" required:"false" cty:"login_server" hcl:"login_server"`
+	LoginUsername             *string           `mapstructure:"login_username" required:"false" cty:"login_username" hcl:"login_username"`
 }
 
 // FlatMapstructure returns a new FlatConfig.
@@ -178,6 +182,10 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"volumes":                      &hcldec.AttrSpec{Name: "volumes", Type: cty.Map(cty.String), Required: false},
 		"fix_upload_owner":             &hcldec.AttrSpec{Name: "fix_upload_owner", Type: cty.Bool, Required: false},
 		"systemd":                      &hcldec.AttrSpec{Name: "systemd", Type: cty.String, Required: false},
+		"login":                        &hcldec.AttrSpec{Name: "login", Type: cty.Bool, Required: false},
+		"login_password":               &hcldec.AttrSpec{Name: "login_password", Type: cty.String, Required: false},
+		"login_server":                 &hcldec.AttrSpec{Name: "login_server", Type: cty.String, Required: false},
+		"login_username":               &hcldec.AttrSpec{Name: "login_username", Type: cty.String, Required: false},
 	}
 	return s
 }
