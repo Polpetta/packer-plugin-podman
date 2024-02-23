@@ -42,6 +42,14 @@ func (s *StepPull) Run(ctx context.Context, state multistep.StateBag) multistep.
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
+
+		defer func() {
+			ui.Message("Logging out...")
+			if err := driver.Logout(config.LoginServer); err != nil {
+				ui.Error(fmt.Sprintf("Error logging out: %s", err))
+			}
+
+		}()
 	}
 
 	if err := driver.Pull(config.Image); err != nil {
