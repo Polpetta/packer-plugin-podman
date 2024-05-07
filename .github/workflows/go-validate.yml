@@ -44,7 +44,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ needs.get-go-version.outputs.go-version }}
-      - uses: golangci/golangci-lint-action@v5
+      - uses: golangci/golangci-lint-action@v6
         with:
           version: v1.47.3
           only-new-issues: true
