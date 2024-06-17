@@ -1,0 +1,19 @@
+---
+name: draft-release
+on:
+  pull_request_target:
+    types:
+      - closed
+
+jobs:
+  update_release_draft:
+    if: |
+      github.event.pull_request.merged &&
+      !contains(github.event.pull_request.labels.*.name, 'skip_changelog')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: release-drafter/release-drafter@v6
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
