@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -88,23 +87,35 @@ func (c *Communicator) Upload(dst string, src io.Reader, fi *os.FileInfo) error 
 // uploadReader writes an io.Reader to a temporary file before uploading
 func (c *Communicator) uploadReader(dst string, src io.Reader) error {
 	// Create a temporary file to store the upload
-	tempfile, err := ioutil.TempFile(c.HostDir, "upload")
+	tempfile, err := os.CreateTemp(c.HostDir, "upload")
 	if err != nil {
-		return fmt.Errorf("Failed to open temp file for writing: %s", err)
+		return fmt.Errorf("Failed to open temp file for writing: %s", err) //nolint:staticcheck
 	}
-	defer os.Remove(tempfile.Name())
-	defer tempfile.Close()
+	defer func() {
+		err := os.Remove(tempfile.Name())
+		if err != nil {
+			// Handle the error appropriately, e.g., log it or return it
+			fmt.Fprintf(os.Stderr, "Error removing file: %v\n", err)
+		}
+	}()
+	defer func() {
+		err := tempfile.Close()
+		if err != nil {
+			// Handle the error appropriately, e.g., log it or return it
+			fmt.Fprintf(os.Stderr, "Error closing file: %v\n", err)
+		}
+	}()
 
 	if _, err := io.Copy(tempfile, src); err != nil {
-		return fmt.Errorf("Failed to copy upload file to tempfile: %s", err)
+		return fmt.Errorf("Failed to copy upload file to tempfile: %s", err) //nolint:staticcheck
 	}
 	if _, err := tempfile.Seek(0, 0); err != nil {
-		return fmt.Errorf("Error seeking tempfile info: %s", err)
+		return fmt.Errorf("Error seeking tempfile info: %s", err) //nolint:staticcheck
 	}
 
 	fi, err := tempfile.Stat()
 	if err != nil {
-		return fmt.Errorf("Error getting tempfile info: %s", err)
+		return fmt.Errorf("Error getting tempfile info: %s", err) //nolint:staticcheck
 	}
 	return c.uploadFile(dst, tempfile, &fi)
 }
@@ -119,12 +130,12 @@ func (c *Communicator) uploadFile(dst string, src io.Reader, fi *os.FileInfo) er
 
 	stderrP, err := localCmd.StderrPipe()
 	if err != nil {
-		return fmt.Errorf("Failed to open pipe: %s", err)
+		return fmt.Errorf("Failed to open pipe: %s", err) //nolint:staticcheck
 	}
 
 	stdin, err := localCmd.StdinPipe()
 	if err != nil {
-		return fmt.Errorf("Failed to open pipe: %s", err)
+		return fmt.Errorf("Failed to open pipe: %s", err) //nolint:staticcheck
 	}
 
 	if err := localCmd.Start(); err != nil {
@@ -138,29 +149,29 @@ func (c *Communicator) uploadFile(dst string, src io.Reader, fi *os.FileInfo) er
 	}
 	header.Name = filepath.Base(dst)
 	if err := archive.WriteHeader(header); err != nil {
-		return fmt.Errorf("Failed to write header: %s", err)
+		return fmt.Errorf("Failed to write header: %s", err) //nolint:staticcheck
 	}
 
 	numBytes, err := io.Copy(archive, src)
 	if err != nil {
-		return fmt.Errorf("Failed to pipe upload: %s", err)
+		return fmt.Errorf("Failed to pipe upload: %s", err) //nolint:staticcheck
 	}
 	log.Printf("Copied %d bytes for %s", numBytes, dst)
 
 	if err := archive.Close(); err != nil {
-		return fmt.Errorf("Failed to close archive: %s", err)
+		return fmt.Errorf("Failed to close archive: %s", err) //nolint:staticcheck
 	}
 	if err := stdin.Close(); err != nil {
-		return fmt.Errorf("Failed to close stdin: %s", err)
+		return fmt.Errorf("Failed to close stdin: %s", err) //nolint:staticcheck
 	}
 
-	stderrOut, err := ioutil.ReadAll(stderrP)
+	stderrOut, err := io.ReadAll(stderrP)
 	if err != nil {
 		return err
 	}
 
 	if err := localCmd.Wait(); err != nil {
-		return fmt.Errorf("Failed to upload to '%s' in container: %s. %s.", dst, stderrOut, err)
+		return fmt.Errorf("Failed to upload to '%s' in container: %s. %s.", dst, stderrOut, err) //nolint:staticcheck
 	}
 
 	if err := c.fixDestinationOwner(dst); err != nil {
@@ -202,19 +213,19 @@ func (c *Communicator) UploadDir(dst string, src string, exclude []string) error
 
 	stderrP, err := localCmd.StderrPipe()
 	if err != nil {
-		return fmt.Errorf("Failed to open pipe: %s", err)
+		return fmt.Errorf("Failed to open pipe: %s", err) //nolint:staticcheck
 	}
 	if err := localCmd.Start(); err != nil {
-		return fmt.Errorf("Failed to copy: %s", err)
+		return fmt.Errorf("Failed to copy: %s", err) //nolint:staticcheck
 	}
-	stderrOut, err := ioutil.ReadAll(stderrP)
+	stderrOut, err := io.ReadAll(stderrP)
 	if err != nil {
 		return err
 	}
 
 	// Wait for the copy to complete
 	if err := localCmd.Wait(); err != nil {
-		return fmt.Errorf("Failed to upload to '%s' in container: %s. %s.", dst, stderrOut, err)
+		return fmt.Errorf("Failed to upload to '%s' in container: %s. %s.", dst, stderrOut, err) //nolint:staticcheck
 	}
 
 	if err := c.fixDestinationOwner(dst); err != nil {
@@ -233,16 +244,16 @@ func (c *Communicator) Download(src string, dst io.Writer) error {
 
 	pipe, err := localCmd.StdoutPipe()
 	if err != nil {
-		return fmt.Errorf("Failed to open pipe: %s", err)
+		return fmt.Errorf("Failed to open pipe: %s", err) //nolint:staticcheck
 	}
 
 	stderrP, err := localCmd.StderrPipe()
 	if err != nil {
-		return fmt.Errorf("Failed to open stderr pipe: %s", err)
+		return fmt.Errorf("Failed to open stderr pipe: %s", err) //nolint:staticcheck
 	}
 
 	if err = localCmd.Start(); err != nil {
-		return fmt.Errorf("Failed to start download: %s", err)
+		return fmt.Errorf("Failed to start download: %s", err) //nolint:staticcheck
 	}
 
 	// When you use - to send podman cp to stdout it is streamed as a tar; this
@@ -254,29 +265,29 @@ func (c *Communicator) Download(src string, dst io.Writer) error {
 	if err != nil {
 		// see if we can get a useful error message from stderr, since stdout
 		// is messed up.
-		if stderrOut, err := ioutil.ReadAll(stderrP); err == nil {
+		if stderrOut, err := io.ReadAll(stderrP); err == nil {
 			if string(stderrOut) != "" {
-				return fmt.Errorf("Error downloading file: %s", string(stderrOut))
+				return fmt.Errorf("Error downloading file: %s", string(stderrOut)) //nolint:staticcheck
 			}
 		}
-		return fmt.Errorf("Failed to read header from tar stream: %s", err)
+		return fmt.Errorf("Failed to read header from tar stream: %s", err) //nolint:staticcheck
 	}
 
 	numBytes, err := io.Copy(dst, archive)
 	if err != nil {
-		return fmt.Errorf("Failed to pipe download: %s", err)
+		return fmt.Errorf("Failed to pipe download: %s", err) //nolint:staticcheck
 	}
 	log.Printf("Copied %d bytes for %s", numBytes, src)
 
 	if err = localCmd.Wait(); err != nil {
-		return fmt.Errorf("Failed to download '%s' from container: %s", src, err)
+		return fmt.Errorf("Failed to download '%s' from container: %s", src, err) //nolint:staticcheck
 	}
 
 	return nil
 }
 
 func (c *Communicator) DownloadDir(src string, dst string, exclude []string) error {
-	return fmt.Errorf("DownloadDir is not implemented for podman")
+	return fmt.Errorf("DownloadDir is not implemented for podman") //nolint:staticcheck
 }
 
 // Runs the given command and blocks until completion
@@ -287,8 +298,8 @@ func (c *Communicator) run(cmd *exec.Cmd, remote *packersdk.RemoteCmd, stdin io.
 	defer c.lock.Unlock()
 
 	wg := sync.WaitGroup{}
+	//nolint:errcheck
 	repeat := func(w io.Writer, r io.ReadCloser) {
-		//nolint:errcheck
 		io.Copy(w, r)
 		r.Close()
 		wg.Done()
@@ -315,8 +326,8 @@ func (c *Communicator) run(cmd *exec.Cmd, remote *packersdk.RemoteCmd, stdin io.
 	var exitStatus int
 
 	if remote.Stdin != nil {
+		//nolint:errcheck
 		go func() {
-			//nolint:errcheck
 			io.Copy(stdin, remote.Stdin)
 			// close stdin to support commands that wait for stdin to be closed before exiting.
 			stdin.Close()
@@ -356,7 +367,7 @@ func (c *Communicator) fixDestinationOwner(destination string) error {
 		fmt.Sprintf("chown -R %s %s", owner, destination),
 	}
 	if output, err := exec.Command(chownArgs[0], chownArgs[1:]...).CombinedOutput(); err != nil {
-		return fmt.Errorf("Failed to set owner of the uploaded file: %s, %s", err, output)
+		return fmt.Errorf("Failed to set owner of the uploaded file: %s, %s", err, output) //nolint:staticcheck
 	}
 
 	return nil

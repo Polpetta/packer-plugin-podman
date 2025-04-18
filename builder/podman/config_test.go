@@ -1,7 +1,6 @@
 package podman
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -45,11 +44,11 @@ func testConfigOk(t *testing.T, warns []string, err error) {
 }
 
 func TestConfigPrepare_exportPath(t *testing.T) {
-	td, err := ioutil.TempDir("", "packer")
+	td, err := os.MkdirTemp("", "packer")
 	if err != nil {
 		t.Fatalf("err: %s", err)
 	}
-	defer os.RemoveAll(td)
+	defer os.RemoveAll(td) //nolint:errcheck
 
 	raw := testConfig()
 

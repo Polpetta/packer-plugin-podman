@@ -2,3 +2,6 @@ main
 dist/*
 packer-plugin-podman
 .idea/
+.vscode
+.lock
+.DS_Store

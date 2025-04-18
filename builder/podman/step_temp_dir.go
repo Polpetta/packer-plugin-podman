@@ -3,7 +3,6 @@ package podman
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -46,9 +45,9 @@ func ConfigTmpDir() (string, error) {
 		return "", err
 	}
 
-	td, err := ioutil.TempDir(configdir, "tmp")
+	td, err := os.MkdirTemp(configdir, "tmp")
 	if err != nil {
-		return "", fmt.Errorf("Error creating temp dir: %s", err)
+		return "", fmt.Errorf("Error creating temp dir: %s", err) //nolint:staticcheck
 
 	}
 	log.Printf("Set Packer temp dir to %s", td)
@@ -62,7 +61,7 @@ func (s *StepTempDir) Run(ctx context.Context, state multistep.StateBag) multist
 
 	tempdir, err := ConfigTmpDir()
 	if err != nil {
-		err := fmt.Errorf("Error making temp dir: %s", err)
+		err := fmt.Errorf("Error making temp dir: %s", err) //nolint:staticcheck
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -75,6 +74,6 @@ func (s *StepTempDir) Run(ctx context.Context, state multistep.StateBag) multist
 
 func (s *StepTempDir) Cleanup(state multistep.StateBag) {
 	if s.tempDir != "" {
-		os.RemoveAll(s.tempDir)
+		os.RemoveAll(s.tempDir) //nolint:errcheck
 	}
 }

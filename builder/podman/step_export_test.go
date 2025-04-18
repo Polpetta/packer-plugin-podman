@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -27,12 +26,12 @@ func TestStepExport(t *testing.T) {
 	defer step.Cleanup(state)
 
 	// Create a tempfile for our output path
-	tf, err := ioutil.TempFile("", "packer")
+	tf, err := os.CreateTemp("", "packer")
 	if err != nil {
 		t.Fatalf("err: %s", err)
 	}
-	tf.Close()
-	defer os.Remove(tf.Name())
+	tf.Close()                 //nolint:errcheck
+	defer os.Remove(tf.Name()) //nolint:errcheck
 
 	config := state.Get("config").(*Config)
 	config.ExportPath = tf.Name()
@@ -53,7 +52,7 @@ func TestStepExport(t *testing.T) {
 	}
 
 	// verify the data exported to the file
-	contents, err := ioutil.ReadFile(tf.Name())
+	contents, err := os.ReadFile(tf.Name())
 	if err != nil {
 		t.Fatalf("err: %s", err)
 	}
@@ -69,11 +68,11 @@ func TestStepExport_error(t *testing.T) {
 	defer step.Cleanup(state)
 
 	// Create a tempfile for our output path
-	tf, err := ioutil.TempFile("", "packer")
+	tf, err := os.CreateTemp("", "packer")
 	if err != nil {
 		t.Fatalf("err: %s", err)
 	}
-	tf.Close()
+	tf.Close() //nolint:errcheck
 
 	if err := os.Remove(tf.Name()); err != nil {
 		t.Fatalf("err: %s", err)

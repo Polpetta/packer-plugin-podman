@@ -34,6 +34,7 @@ func (d *PodmanDriver) DeleteImage(id string) error {
 	}
 
 	if err := cmd.Wait(); err != nil {
+		//nolint:staticcheck
 		err = fmt.Errorf("Error deleting image: %s\nStderr: %s",
 			err, stderr.String())
 		return err
@@ -68,6 +69,7 @@ func (d *PodmanDriver) Commit(id string, author string, changes []string, messag
 	}
 
 	if err := cmd.Wait(); err != nil {
+		//nolint:staticcheck
 		err = fmt.Errorf("Error committing container: %s\nStderr: %s",
 			err, stderr.String())
 		return "", err
@@ -88,6 +90,7 @@ func (d *PodmanDriver) Export(id string, dst io.Writer) error {
 	}
 
 	if err := cmd.Wait(); err != nil {
+		//nolint:staticcheck
 		err = fmt.Errorf("Error exporting: %s\nStderr: %s",
 			err, stderr.String())
 		return err
@@ -122,7 +125,13 @@ func (d *PodmanDriver) Import(path string, changes []string, repo string) (strin
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	defer func() {
+		err := file.Close()
+		if err != nil {
+			// Handle the error appropriately, e.g., log it or return it
+			fmt.Fprintf(os.Stderr, "Error closing file: %v\n", err)
+		}
+	}()
 
 	log.Printf("Importing tarball with args: %v", args)
 
@@ -131,13 +140,14 @@ func (d *PodmanDriver) Import(path string, changes []string, repo string) (strin
 	}
 
 	go func() {
+		//nolint:errcheck
 		defer stdin.Close()
 		//nolint
 		io.Copy(stdin, file)
 	}()
 
 	if err := cmd.Wait(); err != nil {
-		return "", fmt.Errorf("Error importing container: %s\n\nStderr: %s", err, stderr.String())
+		return "", fmt.Errorf("Error importing container: %s\n\nStderr: %s", err, stderr.String()) //nolint:staticcheck
 	}
 
 	return strings.TrimSpace(stdout.String()), nil
@@ -154,7 +164,7 @@ func (d *PodmanDriver) IPAddress(id string) (string, error) {
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("Error: %s\n\nStderr: %s", err, stderr.String())
+		return "", fmt.Errorf("Error: %s\n\nStderr: %s", err, stderr.String()) //nolint:staticcheck
 	}
 
 	return strings.TrimSpace(stdout.String()), nil
@@ -171,7 +181,7 @@ func (d *PodmanDriver) Sha256(id string) (string, error) {
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("Error: %s\n\nStderr: %s", err, stderr.String())
+		return "", fmt.Errorf("Error: %s\n\nStderr: %s", err, stderr.String()) //nolint:staticcheck
 	}
 
 	return strings.TrimSpace(stdout.String()), nil
@@ -188,7 +198,7 @@ func (d *PodmanDriver) Cmd(id string) (string, error) {
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("Error: %s\n\nStderr: %s", err, stderr.String())
+		return "", fmt.Errorf("Error: %s\n\nStderr: %s", err, stderr.String()) //nolint:staticcheck
 	}
 
 	return strings.TrimSpace(stdout.String()), nil
@@ -205,7 +215,7 @@ func (d *PodmanDriver) Entrypoint(id string) (string, error) {
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("Error: %s\n\nStderr: %s", err, stderr.String())
+		return "", fmt.Errorf("Error: %s\n\nStderr: %s", err, stderr.String()) //nolint:staticcheck
 	}
 
 	return strings.TrimSpace(stdout.String()), nil
@@ -250,7 +260,7 @@ func (d *PodmanDriver) Login(repo, user, pass string) error {
 			if err != nil {
 				return err
 			}
-			stdin.Close()
+			stdin.Close() //nolint:errcheck
 		} else {
 			cmd.Args = append(cmd.Args, "-p", pass)
 		}
@@ -303,6 +313,7 @@ func (d *PodmanDriver) SaveImage(id string, dst io.Writer) error {
 	}
 
 	if err := cmd.Wait(); err != nil {
+		//nolint:staticcheck
 		err = fmt.Errorf("Error exporting: %s\nStderr: %s",
 			err, stderr.String())
 		return err
@@ -364,6 +375,7 @@ func (d *PodmanDriver) StartContainer(config *ContainerConfig) (string, error) {
 	log.Println("Waiting for container to finish starting")
 	if err := cmd.Wait(); err != nil {
 		if _, ok := err.(*exec.ExitError); ok {
+			//nolint:staticcheck
 			err = fmt.Errorf("Podman exited with a non-zero exit status.\nStderr: %s",
 				stderr.String())
 		}
@@ -432,6 +444,7 @@ func (d *PodmanDriver) TagImage(id string, repo string, force bool) error {
 	}
 
 	if err := cmd.Wait(); err != nil {
+		//nolint:staticcheck
 		err = fmt.Errorf("Error tagging image: %s\nStderr: %s",
 			err, stderr.String())
 		return err
@@ -456,7 +469,7 @@ func (d *PodmanDriver) Version() (*version.Version, error) {
 
 	match := regexp.MustCompile(version.VersionRegexpRaw).FindSubmatch(output)
 	if match == nil {
-		return nil, fmt.Errorf("unknown version: %s", output)
+		return nil, fmt.Errorf("unknown version: %s", output) //nolint:staticcheck
 	}
 
 	return version.NewVersion(string(match[0]))

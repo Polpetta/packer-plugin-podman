@@ -17,7 +17,7 @@ func (s *StepExport) Run(ctx context.Context, state multistep.StateBag) multiste
 	ui := state.Get("ui").(packersdk.Ui)
 	config, ok := state.Get("config").(*Config)
 	if !ok {
-		err := fmt.Errorf("error encountered obtaining podman config")
+		err := fmt.Errorf("error encountered obtaining podman config") //nolint:staticcheck
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -25,7 +25,7 @@ func (s *StepExport) Run(ctx context.Context, state multistep.StateBag) multiste
 
 	// We should catch this in validation, but guard anyway
 	if config.ExportPath == "" {
-		err := fmt.Errorf("No output file specified, we can't export anything")
+		err := fmt.Errorf("No output file specified, we can't export anything") //nolint:staticcheck
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -41,7 +41,7 @@ func (s *StepExport) Run(ctx context.Context, state multistep.StateBag) multiste
 	// Open the file that we're going to write to
 	f, err := os.Create(config.ExportPath)
 	if err != nil {
-		err := fmt.Errorf("Error creating output file: %s", err)
+		err := fmt.Errorf("Error creating output file: %s", err) //nolint:staticcheck
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -52,15 +52,15 @@ func (s *StepExport) Run(ctx context.Context, state multistep.StateBag) multiste
 
 	ui.Say("Exporting the container")
 	if err := driver.Export(containerId, f); err != nil {
-		f.Close()
-		os.Remove(f.Name())
+		f.Close()           //nolint:errcheck
+		os.Remove(f.Name()) //nolint:errcheck
 
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
 
-	f.Close()
+	f.Close() //nolint:errcheck
 	return multistep.ActionContinue
 }
 

@@ -15,7 +15,7 @@ func (s *StepPull) Run(ctx context.Context, state multistep.StateBag) multistep.
 	ui := state.Get("ui").(packersdk.Ui)
 	config, ok := state.Get("config").(*Config)
 	if !ok {
-		err := fmt.Errorf("error encountered obtaining podman config")
+		err := fmt.Errorf("error encountered obtaining podman config") //nolint:staticcheck
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -37,7 +37,7 @@ func (s *StepPull) Run(ctx context.Context, state multistep.StateBag) multistep.
 			config.LoginUsername,
 			config.LoginPassword)
 		if err != nil {
-			err := fmt.Errorf("Error logging in: %s", err)
+			err := fmt.Errorf("Error logging in: %s", err) //nolint:staticcheck
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
@@ -53,7 +53,7 @@ func (s *StepPull) Run(ctx context.Context, state multistep.StateBag) multistep.
 	}
 
 	if err := driver.Pull(config.Image); err != nil {
-		err := fmt.Errorf("Error pulling Podman image: %s", err)
+		err := fmt.Errorf("Error pulling Podman image: %s", err) //nolint:staticcheck
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

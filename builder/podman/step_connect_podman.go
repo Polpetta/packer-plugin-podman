@@ -14,7 +14,7 @@ type StepConnectPodman struct{}
 func (s *StepConnectPodman) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	config, ok := state.Get("config").(*Config)
 	if !ok {
-		err := fmt.Errorf("error encountered obtaining podman config")
+		err := fmt.Errorf("error encountered obtaining podman config") //nolint:staticcheck
 		state.Put("error", err)
 		return multistep.ActionHalt
 	}
@@ -61,7 +61,7 @@ func getContainerUser(containerId string) (string, error) {
 		if ee, ok := err.(*exec.ExitError); ok {
 			errStr = fmt.Sprintf("%s, %s", errStr, ee.Stderr)
 		}
-		return "", fmt.Errorf(errStr)
+		return "", fmt.Errorf(errStr) //nolint:staticcheck
 	}
 	return strings.TrimSpace(string(stdout)), nil
 }

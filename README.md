@@ -1,5 +1,7 @@
 # Packer Plugin for Podman
 
+[![Go Code Validation](https://github.com/ddreggors/packer-plugin-podman/actions/workflows/go-validate.yml/badge.svg)](https://github.com/ddreggors/packer-plugin-podman/actions/workflows/go-validate.yml) [![Build/Release](https://github.com/ddreggors/packer-plugin-podman/actions/workflows/release.yml/badge.svg)](https://github.com/ddreggors/packer-plugin-podman/actions/workflows/release.yml)
+
 This repository contains a Packer Plugin for Podman. It directly takes the source code from
 [github.com/hashicorp/packer-plugin-docker](https://github.com/hashicorp/packer-plugin-docker) and it "remixes" it to
 make it work with Podman. I've simply taken the default scaffolder, run sed on it (`scaffolder -> podman`) and the used
@@ -42,7 +44,7 @@ This will help test and validate plugin releases.
 # Requirements
 
 -	[packer-plugin-sdk](https://github.com/hashicorp/packer-plugin-sdk) >= v0.1.0
--	[Go](https://golang.org/doc/install) >= 1.16
+-	[Go](https://golang.org/doc/install) >= 1.24
 
 ## Packer Compatibility
-This podman template is compatible with Packer >= v1.7.0
+This podman template is compatible with Packer >= v1.12.0

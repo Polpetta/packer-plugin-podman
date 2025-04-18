@@ -16,7 +16,7 @@ func (s *StepRun) Run(ctx context.Context, state multistep.StateBag) multistep.S
 	ui := state.Get("ui").(packersdk.Ui)
 	config, ok := state.Get("config").(*Config)
 	if !ok {
-		err := fmt.Errorf("error encountered obtaining podman config")
+		err := fmt.Errorf("error encountered obtaining podman config") //nolint:staticcheck
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
@@ -45,7 +45,7 @@ func (s *StepRun) Run(ctx context.Context, state multistep.StateBag) multistep.S
 	ui.Say("Starting podman container...")
 	containerId, err := driver.StartContainer(&runConfig)
 	if err != nil {
-		err := fmt.Errorf("Error running container: %s", err)
+		err := fmt.Errorf("Error running container: %s", err) //nolint:staticcheck
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

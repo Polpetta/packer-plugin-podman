@@ -5,15 +5,17 @@ package podman
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/hashicorp/packer-plugin-sdk/common"
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/mitchellh/mapstructure"
-	"os"
 )
 
+//nolint:staticcheck
 var (
 	errArtifactNotUsed     = fmt.Errorf("No instructions given for handling the artifact; expected commit, discard, or export_path")
 	errArtifactUseConflict = fmt.Errorf("Cannot specify more than one of commit, discard, and export_path")

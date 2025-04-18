@@ -1,45 +1,71 @@
 # This GitHub action can publish assets for release when a tag is created.
 # Currently its setup to run on any tag that matches the pattern "v*" (ie. v0.1.0).
 #
-# This uses an action (hashicorp/ghaction-import-gpg) that assumes you set your
-# private key in the `GPG_PRIVATE_KEY` secret and passphrase in the `PASSPHRASE`
-# secret. If you would rather own your own GPG handling, please fork this action
-# or use an alternative one for key handling.
-#
-# You will need to pass the `--batch` flag to `gpg` in your signing step
-# in `goreleaser` to indicate this is being used in a non-interactive mode.
-#
-name: release
+name: Build and Release
 on:
   push:
     tags:
       - 'v*'
+  workflow_call:
+    secrets:
+      PASSPHRASE:
+        description: 'A GPG Key passphrase passed from the caller workflow'
+        required: false
+      FINGERPRINT:
+        description: 'A GPG Key fingerprint passed from the caller workflow'
+        required: false
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Test scenario tags'
 jobs:
+  get-go-version:
+    runs-on: ubuntu-latest
+    outputs:
+      go-version: ${{ steps.get-go-version.outputs.go-version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 'Determine Go version.'
+        id: get-go-version
+        run: |
+          echo "Found Go $(cat .go-version)"
+          echo "go-version=$(cat .go-version)" >> $GITHUB_OUTPUT
   goreleaser:
+    needs:
+      - get-go-version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Unshallow
-        run: git fetch --prune --unshallow
+        with:
+          fetch-depth: 0
+      - name: Git Fetch
+        run: git fetch --prune
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.16
+          go-version: ${{ needs.get-go-version.outputs.go-version }}
       - name: Describe plugin
         id: plugin_describe
         run: echo "::set-output name=api_version::$(go run . describe | jq -r '.api_version')"
       - name: Import GPG key
         id: import_gpg
-        uses: hashicorp/ghaction-import-gpg@v2.1.0
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          PASSPHRASE: ${{ secrets.PASSPHRASE }}
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
-          version: latest
-          args: release --rm-dist
+          # either 'goreleaser' (default) or 'goreleaser-pro'
+          distribution: goreleaser
+          # 'latest', 'nightly', or a semver (Example: ~> v2)
+          version: '~> v2'
+          args: release --clean
         env:
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,5 +1,5 @@
 ---
-name: draft-release
+name: Draft Release
 on:
   pull_request_target:
     types:

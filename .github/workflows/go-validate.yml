@@ -2,7 +2,7 @@
 # This GitHub action runs basic linting checks for Packer.
 #
 
-name: "Go Validate"
+name: "Go Validation"
 
 on:
   push:
@@ -44,9 +44,11 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ needs.get-go-version.outputs.go-version }}
-      - uses: golangci/golangci-lint-action@v6
+          check-latest: true
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v7
         with:
-          version: v1.47.3
+          version: v2.1.2
           only-new-issues: true
   check-fmt:
     needs:
